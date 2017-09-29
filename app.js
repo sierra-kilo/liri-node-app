@@ -5,7 +5,7 @@ var Spotify = require("node-spotify-api");
 var fs = require("fs");
 
 var args = process.argv;
-var temp = args.splice(3,args.length - 2);
+var temp = args.splice(3);
 
 
 function liri() {
@@ -41,25 +41,26 @@ function liri() {
 			myTweets(tweets=20, screen_name="DannyBofHouseB")
 			break;		
 		case "spotify-this-song":
-			var choice = temp.join(" ");
 			var song;
-			if (args[3]) {
-				song = args[3];
+			if (temp) {
+				song = temp.join(" ");
 			} else {
-				song = "The Sign"
+				song = "The Sign";
+				console.log("or wait, what song?")
 			}
 			var spotify = new Spotify({
 	  		id: keys.spotKeys.id,
 	  		secret: keys.spotKeys.secret
 			});
 
-			spotify.search({ type: 'track', query: 'Hey Jude' })
-		  .then(function(response) {
-		    console.log(response);
-		  })
-		  .catch(function(err) {
-		    console.log(err);
-		  });
+			spotify.search({ type: 'track', query: song }, function(err, data) {
+  			if (err) {
+    			return console.log('Error occurred: ' + err);
+    		};
+    		var here = data.tracks.items[0]
+    		console.log("Artist: " + here.artists[0].name + "\nTitle: " + here.name + "\nAlbum: " + here.album.name + "\nCan be found: " + here.external_urls.spotify)
+
+    	});
 			break;
 		case "movie-this":
 			var movie = temp.join("+");
